@@ -6,7 +6,8 @@ import game
 
 print("Welcome to the Robot Arm Control System!")
 while True:
-    objs, cenn_,right = cm.camera() #{'battery': (128, 196)}, [388.0, 73.5]  
+    #objs, cenn_,right =  {'battery': (128, 196)}, [388.0, 73.5],[13.5,13.5]
+    objs, cenn_,right = cm.camera()  
     objs1 = f"Objects found {objs}"
     print(objs1, cenn_)
 

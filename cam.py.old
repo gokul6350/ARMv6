@@ -17,10 +17,19 @@ def camera():
         result = object.detect_objects(frame,model)
 
         # Access objects and coordinates from the result dictionary
-        detected_objects = result["detect_objects"]
-     
+        detected_objects = result["objects"]
+        object_coordinates = result["coordinates"]
         right=(int(13.5), int(13.5))
-        print(detected_objects)
+        print("Detected Objects and Coordinates:")
+        for obj, coord in zip(detected_objects, object_coordinates):
+            print("====================")
+            obj_found[obj]=coord
+            
+            if obj == "battery":
+                print(f"🔋battery:{coord}")
+            else:
+                print(f"{obj}: {coord}")
+
         cenn_ = result["cen"]
         key = cv.waitKey(1)
         if key == ord("q"):
