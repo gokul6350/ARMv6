@@ -6,29 +6,22 @@ def camera():
 
     print("Welcome to the Robot Arm Control System!")
 
-    obj_found={}
-    cap = cv.VideoCapture(0)
-    model = YOLO("best.pt")
+
     for _i in range(4):
-        ret, frame = cap.read()
-        if not ret:
-            break
-        print(_i)
-        result = object.detect_objects(frame,model)
+        result = object.detect_objects()
 
         # Access objects and coordinates from the result dictionary
-        detected_objects = result["detect_objects"]
+        detected_objects = result["detect_obj"]
      
-        right=(int(13.5), int(13.5))
+        #right=(int(13.5), int(13.5))
         print(detected_objects)
-        cenn_ = result["cen"]
+        cen=result["cen"]
         key = cv.waitKey(1)
         if key == ord("q"):
             break
-    print(obj_found,cenn_)
-    cap.release()
-    cv.destroyAllWindows()
-    return obj_found,cenn_,right
+    
+
+    return detected_objects,cen
   
         
 

@@ -1,0 +1,6 @@
+opencv
+ultralytics
+arduinoserial2 
+matplotlib
+rich
+google.generativeai
