@@ -15,6 +15,7 @@ def detect_markers(frame):
         gray_frame, marker_dict, parameters=param_markers
     )
     cen={"cen1":[],"cen2":[],"cen3":[],"cen4":[]}
+    cor={"con1":[],"con2":[],"con3":[],"con4":[]}
     # getting corners of markers
     if marker_corners:
         for ids, corners in zip(marker_IDs, marker_corners):
@@ -24,6 +25,7 @@ def detect_markers(frame):
             center = tuple(map(int, np.mean(corners, axis=(1, 0))))
             corners = corners.reshape(4, 2)
             cv.circle(frame, center, 5, (0, 255, 0), -1)
+            corners1=corners
             corners = corners.astype(int)
             top_right = corners[0].ravel()
             top_left = corners[1].ravel()
@@ -43,14 +45,17 @@ def detect_markers(frame):
             if int(ids) == 1:
                 cen1 = center
                 cen["cen1"]=cen1
+                cor["con1"]=corners1.reshape(1, 4, 2)
             elif int(ids) == 2:
                 cen2 = center
                 cen["cen2"]=cen2
+                cor["con2"]=corners1.reshape(1, 4, 2)
             elif int(ids) == 3:
                 cen3 = center
                 cen["cen3"]=cen3
+                cor["con3"]=corners1.reshape(1, 4, 2)
             elif int(ids) == 4:
                 cen4 = center
                 cen["cen4"]=cen4           
     
-    return frame,cen
+    return frame,cen,cor
