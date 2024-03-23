@@ -277,6 +277,10 @@ def gen_ai(prompt):
       f"input:{msg} ",
       "output: ",
       ]
-    response = model.generate_content(prompt_parts)
+    #response = model.generate_content(prompt_parts)
 
-    return response.text
+    return "_pickup(battery) # Picking up the battery. "#response.text
+
+
+
+#print(gen_ai("pick up the wood"))

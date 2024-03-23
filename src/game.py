@@ -64,6 +64,8 @@ def sim_inverse_k(end_effector_x,end_effector_y):
     formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
     axcolor = 'lightgoldenrodyellow'
     plt.savefig(f'logs/sim-{formatted_time}.png')
+
+    return theta1,theta2
 """
 ax_theta1 = plt.axes([0.1, 0.01, 0.65, 0.03], facecolor=axcolor)
 ax_theta2 = plt.axes([0.1, 0.06, 0.65, 0.03], facecolor=axcolor)

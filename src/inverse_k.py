@@ -3,7 +3,7 @@
 import math
 
 
-def inverse_k2dof(x,y,l1=11,l2=12):
+def inverse_k2dof(x,y,l1=12.5,l2=12.5):
 
 
     upper = x**2 + y**2 - l1**2 - l2**2

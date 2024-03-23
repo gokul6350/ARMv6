@@ -1,74 +1,47 @@
 import cv2 as cv
-from cv2 import aruco
-import numpy as np
-from ultralytics import YOLO
+from marker_detector import detect_markers
+from object_detector import detector
 from datetime import datetime
-import marker
-import math
-import time
-import sys
-
-class NullIO:
-    def write(self, s):
-        pass
-
-def suppress_output():
-    sys.stdout = NullIO()
-
-def enable_output():
-    sys.stdout = sys.__stdout__
-
-
-#suppress_output()
-global detected_objects 
-global origin
-global cen
-detected_objects = {}
-origin = None
-cen = {}
+import numpy as np
+from cv2 import aruco
+MARKER_SIZE = 2.7
+marker_dict = aruco.getPredefinedDictionary(aruco.DICT_5X5_250)
+param_markers = aruco.DetectorParameters()
 calib_data_path = "/home/gokul/Documents/armv6/ARMv6/calib_data/MultiMatrix.npz"
 calib_data = np.load(calib_data_path)
 cam_mat = calib_data["camMatrix"]
 dist_coef = calib_data["distCoef"]
-model = YOLO("best.pt")
-current_time = datetime.now()
-formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
+#global objs
 
-MARKER_SIZE = 2.7
-marker_dict = aruco.getPredefinedDictionary(aruco.DICT_5X5_250)
-param_markers = aruco.DetectorParameters()
+def combine_dicts_overwrite(dict1, dict2):
+    """Merges dictionaries, overwriting existing keys from the second dict.
 
-classNames = ["ball", "battery", "grip"]
-result_dict = {"detect_obj": [], "cen": [], "frame": []}
-vid = cv.VideoCapture(0)
+    Args:
+        dict1 (dict): The first dictionary.
+        dict2 (dict or list): The second dictionary or a list containing a dictionary.
 
-def detector(frame):
-    cv.imshow("ORIGINAL", frame)
-    results = model(frame)
+    Returns:
+        dict: The combined dictionary with overlapping keys overwritten.
+    """
+    if isinstance(dict2, list):
+        if len(dict2) > 0:
+            dict2 = dict2[0]  # Take the first dictionary from the list
+        else:
+            return dict1  # Return dict1 if dict2 is an empty list
+    return {key: value if key not in dict2 else dict2[key] for key, value in dict1.items()} | dict2
 
-    for r in results:
-        boxes = r.boxes
+def prespective_transforme(frame,cen,cor):
+    pts_original = np.float32([cen["cen1"],cen["cen2"],cen["cen4"],cen["cen3"]])
+    wi = round(redist(cor["con1"], cor["con2"]), 1)
+    le = round(redist(cor["con2"], cor["con3"]), 1)
 
-        for box in boxes:
-            x1, y1, x2, y2 = box.xyxy[0]
-            x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
-            class_name = classNames[int(box.cls[0])]
-
-            if class_name == "battery":
-                battery_found = True
-                cx = (x1 + x2) // 2
-                cy = (y1 + y2) // 2
-                battery_center = (cx, cy)
-                cv.rectangle(frame, (x1, y1), (x2, y2), (255, 165, 0), 3)
-                cv.rectangle(frame, (x1, y1), (x2, y2), (255, 165, 0), 1)
-                confidence = math.ceil((box.conf[0] * 100)) / 100
-                text = f"{class_name} ({confidence})"
-                cv.putText(frame, text, (x1, y1 - 10), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
-
-                detected_objects[class_name] = (battery_center[0], battery_center[1])
-            print(f">>>>{detected_objects}")
-
-    return frame
+    #NOT wi,le = wi*10 , le*10
+    wi,le=28.7*10,35.7*10
+    pts_transformed = np.float32([[0, 0], [wi, 0], [0, le], [wi, le]])
+    matrix = cv.getPerspectiveTransform(pts_original, pts_transformed)
+    result = cv.warpPerspective(frame, matrix, (int(wi), int(le)))
+    origin=wi/2
+    return result,wi/2
 def redist(corners1, corners2):
     #corners_1=tuple(map(int,corners1))
     #corners_2=tuple(map(int,corners2))
@@ -83,46 +56,36 @@ def redist(corners1, corners2):
     print(distance)
     return distance
 
-def prespective_transforme(frame,cen,cor):
-    pts_original = np.float32([cen["cen3"],cen["cen4"],cen["cen2"],cen["cen1"]])
-    wi = round(redist(cor["con1"], cor["con2"]), 1)
-    le = round(redist(cor["con2"], cor["con3"]), 1)
-
-    wi,le = wi*10 , le*10
-    pts_transformed = np.float32([[0, 0], [wi, 0], [0, le], [wi, le]])
-    matrix = cv.getPerspectiveTransform(pts_original, pts_transformed)
-    result = cv.warpPerspective(frame, matrix, (int(wi), int(le)))
-    origin=wi/2
-    return result,wi/2
 def cam():
-    while True:
+    objs ={}
+    
+    vid = cv.VideoCapture(0)
+    for i in range(10):
         ret, frame = vid.read()
         if not ret:
             print("Error reading frame")
             break
 
-        frame,cen,cor= marker.detect_markers(frame)
-        
+        frame, cen, cor = detect_markers(frame)
+        if frame.any():
+            print("Frame is not None")
+        else:
+            print("Frame is a NoneType")
+            break
 
-        if  cen["cen1"] == [] or cen["cen2"] == [] or cen["cen3"] == [] or cen["cen4"] == []:
-            print("ValueError")
+        if cen["cen1"] == [] or cen["cen2"] == [] or cen["cen3"] == [] or cen["cen4"] == []:
+            print("ValueError! Not enough center points")
         elif len(cen) == 4:
-            frame,origin=prespective_transforme(frame,cen,cor)
-            frame=detector(frame)
-        print(detected_objects)
-       # cv.imshow('frame', frame)
-
+            frame, origin = prespective_transforme(frame, cen, cor)
+            cv.imshow('Frame', frame)
+            frame,objs2 = detector(frame)
+            objs=combine_dicts_overwrite(objs,objs2)
+            print(f">>>{objs}")
+        print(i)
         if cv.waitKey(1) & 0xFF == ord('q'):
             break
-   # enable_output()        
+
     vid.release()
     cv.destroyAllWindows()
+    return objs,origin,frame
 
-
-def _Objects():
-    while len(cen) != 4 and detected_objects !={}:
-        #print("cen is !=4 or detected ojs != {}")
-        time.sleep(1000)
-        
-    return detected_objects,origin
-#enable_output()

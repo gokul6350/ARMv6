@@ -12,6 +12,10 @@ def calculate_angle(m, n, y, r, x, z):
     magnitude_d1 = math.sqrt(d1[0] ** 2 + d1[1] ** 2)
     magnitude_d2 = math.sqrt(d2[0] ** 2 + d2[1] ** 2)
 
+    # Check for division by zero
+    if magnitude_d1 == 0 or magnitude_d2 == 0:
+        return 0  # or any other value you choose
+
     # Calculate the angle between the lines at the point (m, n)
     angle = math.acos(dot_product / (magnitude_d1 * magnitude_d2))
     

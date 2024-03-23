@@ -2,6 +2,7 @@ from rich.console import Console
 from rich.prompt import Prompt
 import chat
 import time
+import streamlit as st
 
 console = Console()
 def paser(msg):
@@ -45,6 +46,3 @@ def main(objs):
         if response[0] == "_":
             return cmd
 
-def action(act):
-    #with console.status("[bold green]Generating Responces") as status:
-    NotImplementedError

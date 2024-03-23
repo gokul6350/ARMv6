@@ -15,7 +15,7 @@ model = YOLO("best.pt")
 
 
 def detect_objects():
-    calib_data_path = "/home/gokul/Documents/armv6/calib_data/MultiMatrix.npz"
+    calib_data_path = "/home/gokul/Documents/armv6/ARMv6/calib_data/MultiMatrix.npz"
     calib_data = np.load(calib_data_path)
     cam_mat = calib_data["camMatrix"]
     dist_coef = calib_data["distCoef"]
@@ -137,3 +137,4 @@ def detect_objects():
     cap.release()
     cv.destroyAllWindows()
     return result_dict
+detect_objects()
