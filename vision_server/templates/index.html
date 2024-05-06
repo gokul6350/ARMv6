@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Cam</title>
+</head>
+<body>
+    <div style="display: flex;">
+        <div style="flex: 1;">
+            <h1>Live Webcam Stream</h1>
+            <img id="live_cam" src="" style="display:block;margin:auto;">
+        </div>
+        <div style="flex: 1;">
+            <h1>Dynamic Text</h1>
+            <div id="dynamic_text"></div>
+        </div>
+    </div>
+
+    <script>
+        function updateDynamicTextAndStream() {
+            fetch('/video_feed')  // Endpoint to fetch webcam stream
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                document.getElementById('live_cam').src = url;  // Update webcam stream
+            });
+
+            fetch('/dynamic_text')  // Endpoint to fetch dynamic text
+            .then(response => response.text())
+            .then(text => {
+                document.getElementById('dynamic_text').innerText = text;  // Update dynamic text
+            });
+        }
+
+        // Update webcam stream and dynamic text every second
+        setInterval(updateDynamicTextAndStream, 1000);
+    </script>
+</body>
+</html>
