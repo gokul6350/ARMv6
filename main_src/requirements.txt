@@ -1,0 +1,12 @@
+arduinoserial2==1.0.2
+gradio==4.29.0
+matplotlib==3.8.4
+opencv-python==4.9.0.80
+pyaudio==0.2.14
+pvcobra==2.0.2
+pvporcupine==1.9.5
+pvorca==0.2.2
+rich==13.7.0
+sounddevice==0.4.6
+soundfile==0.12.1
+google-generativeai==0.3.2

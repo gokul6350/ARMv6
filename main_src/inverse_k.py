@@ -28,7 +28,7 @@ def inverse_k2dof(x,y,l1=12.5,l2=12.5):
 
     b= math.atan(c)
     q1 = math.degrees(a-b)
-    print(f"Angle A {int(q1)} B: {int(q2)}")
+    #print(f"Angle A {int(q1)} B: {int(q2)}")
     return True,int(q1),int(q2)
 
 

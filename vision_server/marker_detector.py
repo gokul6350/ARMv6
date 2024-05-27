@@ -1,6 +1,7 @@
 import cv2 as cv
 from cv2 import aruco
 import numpy as np
+import time
 
 marker_dict = aruco.getPredefinedDictionary(aruco.DICT_5X5_250)
 
@@ -56,6 +57,7 @@ def detect_markers(frame):
                 cor["con3"]=corners1.reshape(1, 4, 2)
             elif int(ids) == 9:
                 cen4 = center
-                cen["cen4"]=cen4           
+                cen["cen4"]=cen4    
+           # time.sleep(1)           
     
     return frame, cen, cor

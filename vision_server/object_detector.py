@@ -1,8 +1,9 @@
 import cv2
 from ultralytics import YOLO ,checks
 import math
+import time
 
-model = YOLO('best5.pt')
+model = YOLO('best5.onnx')
 
 print(checks())
 
@@ -27,7 +28,7 @@ def locate(results,frame):
                 confidence = math.ceil((box.conf[0] * 100)) / 100
                 text = f"{class_name} ({confidence})"
                 cv2.putText(frame, text, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 1)
-
+                cv2.waitKey(1000)
                 
                 detected_objects.setdefault(class_name, []).append(center)
     return detected_objects
@@ -47,7 +48,7 @@ def detector(frame):
 
         #cv2.imshow("YOLOv8 Inference", annotated_frame)
         #print(detected_objects)
-
+       # time.sleep(1)
         return annotated_frame,detected_objects
       
 

@@ -1,13 +1,19 @@
 import game
 import time
-import serial
+#import serial
+import arduinoserial2 as as2
+conection=as2.connect()
+
+from dotenv import dotenv_values
+
+# Load environment variables from .env file
+env_vars = dotenv_values()
+
+# Access the 'port' variable
 
 
-
-
-
-port = "/dev/ttyACM0"
-connection = serial.Serial(port, 9600)
+port = env_vars['port']
+#connection = serial.Serial(port, 9600)
 print(f"Serial {port} is working well")
 
 grup= 60
@@ -38,11 +44,12 @@ y
 currentang={"b":10,"s" :110,"e" :110,"f" :90,"w": 180,"g": 60}
 
 def send(ser, ang):
-    connection.write(f"{ser}{ang}".encode())
+    #connection.write(f"{ser}{ang}".encode())
+    as2.send_data(conection,f"{ser}{ang}")
     currentang[ser]=ang
 
 def check(length):
-    if 19>length or 33<length:
+    if 19>length or 34<length:
         print("""
        ___  _   _ _____    ___  _____   ____      _    _   _  ____ _____         _
       / _ \| | | |_   _|  / _ \|  ___| |  _ \    / \  | \ | |/ ___| ____|      /( )\    
@@ -56,15 +63,16 @@ def check(length):
 
 def pickup(base, x, y):
     check(x)
-    base = base + 5
-    x = x - 10
+   
+    x = x - 11
     a1, a2 = game.sim_inverse_k(x, y)
-    print("=============")
-    print("pick up script")
-    print(a1, a2)
-    print("=============")
+    #print("=============")
+   # print("pick up script")
+    #print(a1, a2)
+   # print("=============")
     
     x, a2 = -a1, a2
+    send("f", 0)
     send("s", 120)
     time.sleep(0.5)
     send("g", grup)
@@ -73,21 +81,46 @@ def pickup(base, x, y):
     time.sleep(0.5)
     send("e", a2)
     time.sleep(0.5)
-    send("b", base)
+    if base >100:
+        base=base+7
+    send("b",base)
     time.sleep(0.5)
     send("s", x)
     wang = wistangle(x, a2)
-    print(wang)
+    #print(wang)
     time.sleep(1)
-    send("w", wang)
+    send("w", wang-15)
     time.sleep(0.5)
     send("g", grdow)
     time.sleep(0.5)
-    send("s", 120)
+   # send("s", 120)
+    send("s", 80)
+    time.sleep(1)
+    send("e", 110)
+    send("w", 130)
+    time.sleep(0.3)
+    
 
+# def initial():
+#     data = ['b90;', 's120;', 'e120;', 'w20;', 'g10;']
 
+#     try:
+        
+       
+#         time.sleep(2) 
+       
+#         for command in data:
+#             #connection.write(command.encode())
+#             sed()  
+#             print(f"Sent: {command}")
+#             time.sleep(0.5) 
 
+#         connection.close()
 
+#     except serial.SerialException as e:
+#         print(f"Error: {e}")
+def drop():
+    openup()
 
 #pickup(base,length,y)
 """
@@ -122,13 +155,13 @@ pickup(base,length,y-17)
 ##########################
 
 def place(base, x, y):
-    base = base + 5
-    x = x - 8
+   
+    x = x - 10
 
     a1, a2 = game.sim_inverse_k(x, y)
-    print("=============")
-    print(a1, a2)
-    print("=============")
+   # print("=============")
+   # print(a1, a2)
+   # print("=============")
     
     x, a2 = -a1, a2
     send("s", 120)
@@ -141,22 +174,25 @@ def place(base, x, y):
     time.sleep(0.5)
     send("s", x)
     wang = wistangle(x, a2)
-    print(wang)
+    #print(wang)
     time.sleep(1)
     send("w", wang)
     time.sleep(0.5)
     send("g", grup)
     time.sleep(0.5)
     send("s", 120)
-  
+    send("b", 90)
+    
 
 #place(45,23,-5) 
 print(currentang)
 def openup():
-    connection.write(f"g{grup}".encode())
+   # connection.write(f"g{grup}".encode())
+    send("g",grup)
 
 def closedown():
-    connection.write(f"g{grdow}".encode())
+    #connection.write(f"g{grdow}".encode())
+    send("g",grdow)
 
 def move(direction):
     if direction =="left":

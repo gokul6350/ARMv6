@@ -1,0 +1,6 @@
+onnx==1.16.1
+onnxruntime==1.18.0
+torch==2.3.0
+torchaudio==2.2.0
+torchvision==0.18.0
+ultralytics==8.2.8

@@ -1,16 +1,18 @@
-# **ARMv7**
+# **ARMv8**
 
 ### Tools & Software Used
 
-- **TTS:** ElevenLabs
+- **TTS:** Pvorca
 - **Object Detection:** YOLOv8 by Ultralytics
-- **Vision Annotation** Roboflow
+- **Vision Annotation:** Roboflow
 - **Speech to Text:** Wisper AI
 - **LLM:** Google Gemini Pro
 - **Microcontroller:** Arduino Uno
 - **UI:** Gradio
 - **2D Simulator:** Matplotlib
-- **Code Language:** Python 3.10.3
+- **Code Language:** Python 3.10
+- Hot word detect : Porcupine
+- VAD: Cobra
 
 If you have $$$ for GPUs (not recommended), then you can make it completely offline.
 

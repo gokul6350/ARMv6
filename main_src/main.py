@@ -1,6 +1,6 @@
 import gradio as gr
 print(gr.__version__)
-from discordwebhook import Discord
+#from discordwebhook import Discord
 import requests
 import time
 import json
@@ -14,8 +14,8 @@ import threading
 
 
 from datetime import datetime
-from log import log1,log2
-from elevenlabs import play , save
+from log import log1,log2,log3
+from elevenlabs import play , save,stream
 from elevenlabs.client import ElevenLabs
 import uuid
 import angle
@@ -23,13 +23,27 @@ import numpy as np
 import stack
 import matplotlib
 matplotlib.use("agg")
+from dotenv import dotenv_values
+env_vars = dotenv_values()
+import time
+from functools import wraps
+# Load environment variables from .env file
 
 global audipth
 def send_(level, message):
   #  discord.post(content=f"[{level}]: {message}")
    pass
 
-
+def measure_time(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        execution_time = end_time - start_time
+        log3(f"Function {func.__name__} executed in {execution_time:.4f} seconds")
+        return result
+    return wrapper
 def act(prompt):
     #prompt=chat.gen_ai(prompt1)
    # print(f"======================= \n   IN {prompt1} \n OUT  {prompt}")
@@ -84,6 +98,7 @@ def frame_2(frame,data):
     cv2.putText(new_frame, text3, (14,300), font, font_scale, font_color, font_thickness, cv2.LINE_AA)
     return new_frame
 
+@measure_time
 def main1(cxv, objs, origin,frame):
     tokens = cxv.split('(')
     command = tokens[0].strip()
@@ -138,13 +153,12 @@ def main1(cxv, objs, origin,frame):
    # print("=================")
     cv2.imwrite(f'logs/obj-line {formatted_time}.jpg',imgstack)
     if command == '_move':
-        pass
+        control.move()
        # move(*args, xxw)
     elif command == '_pickup':
-        control.pickup(base=b_a,x=dist,y=8) 
+        control.pickup(base=b_a,x=dist,y=7.5) 
     elif command == '_drop':
-       # drop(*args, xxw)
-        pass
+        control.drop()
     elif command == '_put':
       #  put(*args, xxw)
       log2(f"TRAGETED BOX {str(args[0])}")
@@ -167,8 +181,9 @@ def paser(msg):
     return [repp, cmd]
 
 # Example usage
+@measure_time
 def client2(file_path):
-    upload_url = "https://b895-34-126-80-56.ngrok-free.app/transcribe" 
+    upload_url = env_vars["transcribe_server"]
 
     # Open the audio file in binary mode
     with open(file_path, "rb") as file:
@@ -197,6 +212,7 @@ def client2(file_path):
   
 
 #chat = Chat(system="You are a helpful assistant.")
+@measure_time
 def run_prompt(text):
     objs, origin,frame = client.handshake()
     full_response = chat.gen_ai(prompt=f"you can see {objs}.  {text}") 
@@ -207,10 +223,13 @@ def run_prompt(text):
     return r_p
 
 
-client1 = ElevenLabs(api_key="none",)
+client1 = ElevenLabs(api_key=  env_vars["elevenlabs_key"],)
+@measure_time
 def run_text_prompt(message, chat_history):
-   
-    rep = run_prompt(message)
+    if message[0] == "_":
+        rep=act(message[1:]) # will skip the LLM part
+    else:
+        rep = run_prompt(message)
  #   discord2.post(content=f"{rep}")
     log1(f"RESPONCES FOR LLM: {rep}")
     audio = client1.generate(
@@ -219,7 +238,7 @@ def run_text_prompt(message, chat_history):
         model="eleven_multilingual_v2"
     )
     
-    threadaudio = threading.Thread(target=play, args=(audio,False))
+    threadaudio = threading.Thread(target=play, args=(audio,))
 
 
 
@@ -242,7 +261,7 @@ def run_audio_prompt(audio, chat_history):
     return None, chat_history
 
 
-with gr.Blocks() as demo:
+with gr.Blocks(title="ROBOTIC ARM LLM") as demo:
     chatbot = gr.Chatbot(height=650)
 
     msg = gr.Textbox()
@@ -254,5 +273,5 @@ with gr.Blocks() as demo:
         send_audio_button = gr.Button("Send Audio", interactive=True)
         send_audio_button.click(run_audio_prompt, [audio, chatbot], [audio, chatbot])
 
-demo.launch(favicon_path="icon.png")
+demo.launch(favicon_path="icon.png",share=True)
      
