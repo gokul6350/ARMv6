@@ -1,6 +1,6 @@
 # **ARMv8**
 
-### Tools & Software Used
+### library Used
 
 - **TTS:** Pvorca
 - **Object Detection:** YOLOv8 by Ultralytics
