@@ -1,5 +1,7 @@
 # **ARMv8**
 [![Hits](https://hits.sh/github.com/gokul6350/ARMv6.svg?style=for-the-badge&label=Views&extraCount=10)](https://hits.sh/github.com/gokul6350/ARMv6/)[![Hits](https://hits.sh/discord.gg/ufeAzBjvAp.svg?style=for-the-badge&label=Discord&color=5953ee)](https://hits.sh/discord.gg/ufeAzBjvAp/)
+
+![t](https://02ip.ru/1ZEeC4.png)
 ### library Used
 
 - **TTS:** Pvorca
