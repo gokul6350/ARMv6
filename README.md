@@ -2,6 +2,10 @@
 [![Hits](https://hits.sh/github.com/gokul6350/ARMv6.svg?style=for-the-badge&label=Views&extraCount=10)](https://hits.sh/github.com/gokul6350/ARMv6/)[![Hits](https://hits.sh/discord.gg/ufeAzBjvAp.svg?style=for-the-badge&label=Discord&color=5953ee)](https://hits.sh/discord.gg/ufeAzBjvAp/)
 
 ![t](https://02ip.ru/1ZEeC4.png)
+
+### YOUTUBE VIDEO 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/qv3bFhHoA5s/0.jpg)](https://www.youtube.com/watch?v=YOUTUBE_VIDEO_ID_HERE)
+
 ### library Used
 
 - **TTS:** Pvorca
